@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container{
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            justify-content: center;
+            gap:20px;
+            padding: 30px;
+        }
+        #header{
+            text-align: center;
+        }
+        #container>div{
+            border: 1px solid;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            height: 350px;
+            box-sizing: border-box;
+        }
+        img{
+             width: 70%;
+             height: 50%;
+            
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h2>Products</h2>
+        <select name="" id="cat">
+            <option value="">All Category</option>
+            <option value="men's clothing">Men's Wear</option>
+            <option value="women's clothing">Women's Wear</option>
+            <option value="electronics">Electonics</option>
+            <option value="jewelery">Jewelery</option>
+        </select>
+        <input type="text" id="min-price" placeholder="Minimum Price">
+        <input type="text" id="max-price" placeholder="Maximum Price">
+        <button onclick="filterProducts()">Filter</button>
+    </div>
+    <div id="container"></div>
+</body>
+</html>
+<script>
+    let container = document.getElementById('container');
+    let products = [];
+
+
+    window.onload =async()=>{
+        await fetchData();
+        displayProducts();
+    }
+    // fetch products 
+
+    async function fetchData(){
+        let data = await fetch('https://fakestoreapi.com/products');
+        products = await data.json();
+    }
+
+    // display data
+    function displayProducts(){
+        container.innerHTML="";
+        products.forEach((item)=>{
+            let div = document.createElement('div');
+            let img = document.createElement('img');
+            let p = document.createElement('p');
+            let h4 = document.createElement('h4');
+            img.src = item.image;
+            p.innerText = item.title;
+            h4.innerText = item.price;
+            div.append(img,p,h4);
+            container.append(div);
+
+        })  
+    }
+    displayProducts(products);
+
+    // filter products
+
+    function filterProducts(){
+        container.innerHTML="";
+        let cat = document.getElementById('cat').value;
+        let min = document.getElementById('min-price').value;
+        let max = document.getElementById('max-price').value;
+        let filterProducts = products.filter((item)=>((cat==''|| cat==item.category) && (min=='' || item.price>=+min)
+        && (max=='' || item.price<=+max)))
+        filterProducts.forEach((item)=>{
+            let div = document.createElement('div');
+            let img = document.createElement('img');
+            let p = document.createElement('p');
+            let h4 = document.createElement('h4');
+            img.src = item.image;
+            p.innerText = item.title;
+            h4.innerText = item.price;
+            div.append(img,p,h4);
+            container.append(div);
+
+        })  
+    }
+
+</script>
